@@ -9,7 +9,6 @@
         <processorPath>
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
-        <module name="activityservice" />
         <module name="userservice" />
       </profile>
       <profile name="Maven default annotation processors profile" enabled="true">
@@ -25,6 +24,14 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
         <module name="aiservice" />
+      </profile>
+      <profile name="Annotation profile for activityservice" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <processorPath>
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="activityservice" />
       </profile>
     </annotationProcessing>
   </component>
