@@ -1,4 +1,1 @@
-/userservice/src/main/resources/application.yaml
-/activityservice/src/main/resources/application.yaml
-/eureka/src/main/resources/application.yaml
-/aiservice/src/main/resources/application.yaml
+/configserver/src/main/resources/config/*
