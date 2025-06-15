@@ -14,7 +14,9 @@ const ActivityForm = ({ onActivityAdded }) => {
         e.preventDefault();
         try {
             await addActivity(activity);
-            onActivityAdded();
+            if (onActivityAdded && typeof onActivityAdded === 'function') {
+                onActivityAdded();
+            }
             setActivity({ type: "RUNNING", duration: '', caloriesBurned: '' });
         } catch (error) {
             console.error(error);
