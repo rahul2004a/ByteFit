@@ -1,71 +1,75 @@
 import './App.css'
-import { BrowserRouter as Router, Navigate, Route, Routes, useLocation } from "react-router";
-import { Box, Button, Typography } from "@mui/material";
+import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router";
+import { Box } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "react-oauth2-code-pkce";
-import { useDispatch } from 'react-redux';
-import { setCredentials } from './store/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCredentials, logout } from './store/authSlice';
 import ActivityDetail from './components/ActivityDetail';
-import ActivityForm from './components/ActivityForm';
-import ActivityList from './components/ActivityList';
-
-const ActvitiesPage = () => {
-  return (<Box sx={{ p: 2, border: '1px dashed grey' }}>
-    <ActivityForm onActivityAdded={() => window.location.reload()} />
-    <ActivityList />
-  </Box>);
-}
+import DashboardPage from './pages/DashboardPage';
+import AddActivityPage from './pages/AddActivityPage';
+import LandingPage from './pages/LandingPage';
+import Navbar from './components/Navbar';
+import { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 function App() {
-  const { token, tokenData, logIn, logOut, isAuthenticated } = useContext(AuthContext);
+  const { token, tokenData } = useContext(AuthContext);
   const dispatch = useDispatch();
-  const [authReady, setAuthReady] = useState(false);
+  const user = useSelector((state) => state.auth.user);
+  const [localToken, setLocalToken] = useState(localStorage.getItem('token'));
+  const [hasShownWelcome, setHasShownWelcome] = useState(false);
+
+  // Listen for localStorage changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setLocalToken(localStorage.getItem('token'));
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   useEffect(() => {
-    if (token) {
+    if (token && tokenData) {
       dispatch(setCredentials({ token, user: tokenData }));
-      setAuthReady(true);
+
+      // Show welcome toast for new login (not on page refresh)
+      if (!hasShownWelcome && tokenData?.preferred_username) {
+        toast.success(`Welcome back, ${tokenData.preferred_username}! 🎉`, {
+          duration: 4000,
+          position: 'top-center',
+          style: {
+            background: 'linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)',
+            color: 'white',
+            fontSize: '16px',
+            fontWeight: '600',
+            borderRadius: '12px',
+            padding: '12px 20px',
+            boxShadow: '0 4px 15px rgba(78, 205, 196, 0.3)',
+          }
+        });
+        setHasShownWelcome(true);
+      }
+    } else if (!token && (user || localToken)) {
+      // If OAuth token is cleared but Redux/localStorage still has data, clear everything
+      dispatch(logout());
+      setLocalToken(null);
+      setHasShownWelcome(false);
     }
-  }, [token, tokenData, dispatch]);
+  }, [token, tokenData, dispatch, user, localToken, hasShownWelcome]);
 
   return (
     <Router>
-      {!token ? (
-        <Box
-          sx={{
-            height: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            textAlign: "center",
-          }}
-        >
-          <Typography variant="h4" gutterBottom>
-            Welcome to the Fitness Tracker App
-          </Typography>
-          <Typography variant="subtitle1" sx={{ mb: 3 }}>
-            Please login to access your activities
-          </Typography>
-          <Button variant="contained" color="primary" size="large" onClick={() => {
-            logIn();
-          }}>
-            LOGIN
-          </Button>
-        </Box>
-      ) : (
-        <Box sx={{ p: 2, border: '1px dashed grey' }}>
-          <Button variant="contained" color="secondary" onClick={logOut}>
-            Logout
-          </Button>
-          <Routes>
-            <Route path="/activities" element={<ActvitiesPage />} />
-            <Route path="/activities/:id" element={<ActivityDetail />} />
-
-            <Route path="/" element={token ? <Navigate to="/activities" replace /> : <div>Welcome! Please Login.</div>} />
-          </Routes>
-        </Box>
-      )}
+      <Navbar />
+      <Box className="main-content">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/add-activity" element={<AddActivityPage />} />
+          <Route path="/activities/:id" element={<ActivityDetail />} />
+        </Routes>
+      </Box>
+      <Toaster />
     </Router>
   )
 }
