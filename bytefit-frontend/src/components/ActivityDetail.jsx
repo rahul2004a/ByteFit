@@ -647,9 +647,65 @@ const ActivityDetail = () => {
                                             </Stack>
                                         </AccordionSummary>
                                         <AccordionDetails>
-                                            <Typography variant="body1" lineHeight={1.7}>
-                                                {activity?.recommendation || recommendation?.recommendation || 'No recommendations available at this time.'}
-                                            </Typography>
+                                            {(() => {
+                                                const text = activity?.recommendation || recommendation?.recommendation || 'No recommendations available at this time.';
+
+                                                // Check if the text contains the structured format with sections
+                                                if (text.includes('Overall:') || text.includes('Pace:') || text.includes('Heart Rate:') || text.includes('Calories:')) {
+                                                    // Split the text into sections
+                                                    const sections = text.split(/(?=Overall:|Pace:|Heart Rate:|Calories:)/);
+
+                                                    return (
+                                                        <Stack spacing={2}>
+                                                            {sections.filter(section => section.trim()).map((section, index) => {
+                                                                const trimmedSection = section.trim();
+                                                                if (!trimmedSection) return null;
+
+                                                                // Extract section title and content
+                                                                const colonIndex = trimmedSection.indexOf(':');
+                                                                if (colonIndex === -1) {
+                                                                    return (
+                                                                        <Typography key={index} variant="body1" lineHeight={1.7}>
+                                                                            {trimmedSection}
+                                                                        </Typography>
+                                                                    );
+                                                                }
+
+                                                                const title = trimmedSection.substring(0, colonIndex + 1);
+                                                                const content = trimmedSection.substring(colonIndex + 1).trim();
+
+                                                                return (
+                                                                    <Box key={index} sx={{ mb: 1.5 }}>
+                                                                        <Typography
+                                                                            variant="subtitle2"
+                                                                            fontWeight="bold"
+                                                                            color="#059669"
+                                                                            sx={{ mb: 0.5 }}
+                                                                        >
+                                                                            {title}
+                                                                        </Typography>
+                                                                        <Typography
+                                                                            variant="body2"
+                                                                            color="text.secondary"
+                                                                            lineHeight={1.6}
+                                                                            sx={{ pl: 1 }}
+                                                                        >
+                                                                            {content}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                );
+                                                            })}
+                                                        </Stack>
+                                                    );
+                                                } else {
+                                                    // Display as regular text if no sections are found
+                                                    return (
+                                                        <Typography variant="body1" lineHeight={1.7}>
+                                                            {text}
+                                                        </Typography>
+                                                    );
+                                                }
+                                            })()}
                                         </AccordionDetails>
                                     </Accordion>
 
