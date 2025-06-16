@@ -1,10 +1,10 @@
-import { 
-    Box, 
-    Button, 
-    FormControl, 
-    InputLabel, 
-    MenuItem, 
-    Select, 
+import {
+    Box,
+    Button,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
     TextField,
     Typography,
     Grid,
@@ -36,82 +36,82 @@ import toast from 'react-hot-toast';
 
 const ActivityForm = ({ onActivityAdded }) => {
     const [activity, setActivity] = useState({
-        type: "RUNNING", 
-        duration: '', 
+        type: "RUNNING",
+        duration: '',
         caloriesBurned: '',
         additionalMetrics: {}
     });
-    
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
 
     const activityTypes = [
-        { 
-            value: "RUNNING", 
-            label: "Running", 
+        {
+            value: "RUNNING",
+            label: "Running",
             icon: <DirectionsRun />,
             color: '#10b981',
             description: "Track your running sessions"
         },
-        { 
-            value: "WALKING", 
-            label: "Walking", 
+        {
+            value: "WALKING",
+            label: "Walking",
             icon: <DirectionsWalk />,
             color: '#f59e0b',
             description: "Log your walking activities"
         },
-        { 
-            value: "CYCLING", 
-            label: "Cycling", 
+        {
+            value: "CYCLING",
+            label: "Cycling",
             icon: <DirectionsBike />,
             color: '#8b5cf6',
             description: "Record your cycling workouts"
         },
-        { 
-            value: "SWIMMING", 
-            label: "Swimming", 
+        {
+            value: "SWIMMING",
+            label: "Swimming",
             icon: <Pool />,
             color: '#0ea5e9',
             description: "Track your swimming sessions"
         },
-        { 
-            value: "WEIGHT_TRAINING", 
-            label: "Weight Training", 
+        {
+            value: "WEIGHT_TRAINING",
+            label: "Weight Training",
             icon: <FitnessCenter />,
             color: '#dc2626',
             description: "Log your strength training"
         },
-        { 
-            value: "YOGA", 
-            label: "Yoga", 
+        {
+            value: "YOGA",
+            label: "Yoga",
             icon: <SelfImprovement />,
             color: '#7c3aed',
             description: "Record your yoga practice"
         },
-        { 
-            value: "HIIT", 
-            label: "HIIT", 
+        {
+            value: "HIIT",
+            label: "HIIT",
             icon: <FlashOn />,
             color: '#ea580c',
             description: "High-intensity interval training"
         },
-        { 
-            value: "CARDIO", 
-            label: "Cardio", 
+        {
+            value: "CARDIO",
+            label: "Cardio",
             icon: <MonitorHeart />,
             color: '#e11d48',
             description: "General cardio workouts"
         },
-        { 
-            value: "STRETCHING", 
-            label: "Stretching", 
+        {
+            value: "STRETCHING",
+            label: "Stretching",
             icon: <Accessibility />,
             color: '#0d9488',
             description: "Flexibility and stretching"
         },
-        { 
-            value: "OTHER", 
-            label: "Other", 
+        {
+            value: "OTHER",
+            label: "Other",
             icon: <MoreHoriz />,
             color: '#6b7280',
             description: "Any other activity"
@@ -125,10 +125,10 @@ const ActivityForm = ({ onActivityAdded }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-        
+
         try {
             await addActivity(activity);
-            
+
             setShowSuccess(true);
             toast.success('🎉 Activity added successfully!', {
                 duration: 3000,
@@ -143,13 +143,13 @@ const ActivityForm = ({ onActivityAdded }) => {
                     boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
                 }
             });
-            
+
             setTimeout(() => {
                 if (onActivityAdded && typeof onActivityAdded === 'function') {
                     onActivityAdded();
                 }
             }, 1500);
-            
+
             setActivity({ type: "RUNNING", duration: '', caloriesBurned: '', additionalMetrics: {} });
         } catch (error) {
             console.error(error);
@@ -191,11 +191,11 @@ const ActivityForm = ({ onActivityAdded }) => {
 
     return (
         <Box component="form" onSubmit={handleSubmit}>
-            <Typography 
-                variant="h5" 
-                sx={{ 
-                    fontWeight: 700, 
-                    color: '#1e293b', 
+            <Typography
+                variant="h5"
+                sx={{
+                    fontWeight: 700,
+                    color: '#1e293b',
                     mb: 4,
                     textAlign: 'center'
                 }}
@@ -240,11 +240,11 @@ const ActivityForm = ({ onActivityAdded }) => {
                             sx={{
                                 cursor: 'pointer',
                                 transition: 'all 0.3s ease',
-                                border: activity.type === activityType.value 
-                                    ? `3px solid ${activityType.color}` 
+                                border: activity.type === activityType.value
+                                    ? `3px solid ${activityType.color}`
                                     : '2px solid rgba(0,0,0,0.1)',
-                                background: activity.type === activityType.value 
-                                    ? `${activityType.color}10` 
+                                background: activity.type === activityType.value
+                                    ? `${activityType.color}10`
                                     : 'white',
                                 minWidth: '160px',
                                 height: '140px',
@@ -255,9 +255,9 @@ const ActivityForm = ({ onActivityAdded }) => {
                                 }
                             }}
                         >
-                            <CardContent sx={{ 
-                                textAlign: 'center', 
-                                py: 2, 
+                            <CardContent sx={{
+                                textAlign: 'center',
+                                py: 2,
                                 px: 2,
                                 height: '100%',
                                 display: 'flex',
@@ -267,10 +267,10 @@ const ActivityForm = ({ onActivityAdded }) => {
                                 <Box sx={{ color: activityType.color, mb: 1 }}>
                                     {React.cloneElement(activityType.icon, { fontSize: 'large' })}
                                 </Box>
-                                <Typography 
-                                    variant="h6" 
-                                    sx={{ 
-                                        fontWeight: 600, 
+                                <Typography
+                                    variant="h6"
+                                    sx={{
+                                        fontWeight: 600,
                                         color: activity.type === activityType.value ? activityType.color : '#374151',
                                         mb: 0.5,
                                         fontSize: '0.9rem'
@@ -278,9 +278,9 @@ const ActivityForm = ({ onActivityAdded }) => {
                                 >
                                     {activityType.label}
                                 </Typography>
-                                <Typography 
-                                    variant="body2" 
-                                    sx={{ 
+                                <Typography
+                                    variant="body2"
+                                    sx={{
                                         color: '#64748b',
                                         fontSize: '0.7rem',
                                         lineHeight: 1.2
@@ -299,10 +299,10 @@ const ActivityForm = ({ onActivityAdded }) => {
                 <Typography variant="h6" sx={{ fontWeight: 600, color: '#374151', mb: 3 }}>
                     Activity Details
                 </Typography>
-                
+
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={6}>
-                        <TextField 
+                        <TextField
                             fullWidth
                             label="Duration"
                             type='number'
@@ -339,9 +339,9 @@ const ActivityForm = ({ onActivityAdded }) => {
                             required
                         />
                     </Grid>
-                    
+
                     <Grid item xs={12} sm={6}>
-                        <TextField 
+                        <TextField
                             fullWidth
                             label="Calories Burned"
                             type='number'
@@ -383,8 +383,8 @@ const ActivityForm = ({ onActivityAdded }) => {
 
             {/* Submit Button */}
             <Box sx={{ textAlign: 'center', mt: 5 }}>
-                <Button 
-                    type='submit' 
+                <Button
+                    type='submit'
                     variant='contained'
                     size="large"
                     disabled={isSubmitting || !activity.duration || !activity.caloriesBurned}

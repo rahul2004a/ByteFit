@@ -1,7 +1,7 @@
 import React from 'react';
-import { 
-    Box, 
-    Typography, 
+import {
+    Box,
+    Typography,
     Container,
     Card,
     CardContent,
@@ -25,8 +25,8 @@ const AddActivityPage = () => {
     };
 
     return (
-        <Box 
-            sx={{ 
+        <Box
+            sx={{
                 minHeight: '100vh',
                 background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
                 paddingTop: '80px',
@@ -63,9 +63,9 @@ const AddActivityPage = () => {
                     >
                         <FitnessCenter sx={{ color: 'white', fontSize: '3rem' }} />
                     </Box>
-                    
-                    <Typography 
-                        variant="h3" 
+
+                    <Typography
+                        variant="h3"
                         sx={{
                             fontWeight: 800,
                             background: 'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
@@ -78,10 +78,10 @@ const AddActivityPage = () => {
                     >
                         Track Your Activity
                     </Typography>
-                    
-                    <Typography 
-                        variant="h6" 
-                        sx={{ 
+
+                    <Typography
+                        variant="h6"
+                        sx={{
                             color: '#64748b',
                             fontWeight: 400,
                             maxWidth: '500px',
