@@ -114,29 +114,58 @@ const Navbar = () => {
     };
 
     const handleAddActivity = () => {
+        // Always allow navigation to add-activity page
+        navigate('/add-activity');
         if (isUserAuthenticated) {
-            navigate('/add-activity');
             toast.success('Ready to log your workout!', {
                 duration: 2000,
                 position: 'top-center',
                 style: toastStyles.success
             });
-        } else {
-            toast.error('Login required to track your activities', {
-                duration: 4000,
-                position: 'top-center',
-                style: toastStyles.warning
-            });
         }
     };
 
-    const handleLogin = () => {
-        toast.loading('Redirecting to login...', {
+    const handleLogin = async () => {
+        // Clear any existing local storage data first
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('userId');
+
+        // Clear Redux state
+        dispatch(logout());
+
+        // Clear local token state
+        setLocalToken(null);
+
+        toast.loading('Preparing login...', {
             duration: 2000,
             position: 'top-center',
             style: toastStyles.info
         });
-        logIn();
+
+        try {
+            // First logout from Keycloak if there's an active session
+            if (token) {
+                await logOut();
+            }
+
+            // Force clear any cookies/session
+            document.cookie.split(";").forEach((c) => {
+                const eqPos = c.indexOf("=");
+                const name = eqPos > -1 ? c.substr(0, eqPos) : c;
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+            });
+
+            // Small delay to ensure cleanup is complete, then login
+            setTimeout(() => {
+                logIn();
+            }, 1000);
+        } catch (error) {
+            console.log('No active session to logout from, proceeding with login:', error);
+            setTimeout(() => {
+                logIn();
+            }, 500);
+        }
     };
 
     const handleLogout = () => {

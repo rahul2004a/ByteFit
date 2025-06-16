@@ -30,11 +30,19 @@ import {
     CheckCircle,
     Send,
 } from '@mui/icons-material';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { addActivity } from '../services/api';
 import toast from 'react-hot-toast';
+import { AuthContext } from 'react-oauth2-code-pkce';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { isUserAuthenticated as checkAuth } from '../utils/auth';
 
 const ActivityForm = ({ onActivityAdded }) => {
+    const { token } = useContext(AuthContext);
+    const user = useSelector((state) => state.auth.user);
+    const navigate = useNavigate();
+
     const [activity, setActivity] = useState({
         type: "RUNNING",
         duration: '',
@@ -44,6 +52,9 @@ const ActivityForm = ({ onActivityAdded }) => {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
+
+    // Check if user is authenticated
+    const isAuthenticated = checkAuth(token, user);
 
     const activityTypes = [
         {
@@ -124,6 +135,30 @@ const ActivityForm = ({ onActivityAdded }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Check authentication before processing
+        if (!isAuthenticated) {
+            toast.error('🔒 Please login to track your activities!', {
+                duration: 4000,
+                position: 'top-center',
+                style: {
+                    background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)',
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    borderRadius: '12px',
+                    padding: '12px 20px',
+                    boxShadow: '0 4px 15px rgba(255, 107, 107, 0.3)',
+                }
+            });
+
+            // Redirect to landing page after showing toast
+            setTimeout(() => {
+                navigate('/');
+            }, 2000);
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {

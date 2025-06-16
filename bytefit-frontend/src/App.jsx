@@ -10,6 +10,7 @@ import DashboardPage from './pages/DashboardPage';
 import AddActivityPage from './pages/AddActivityPage';
 import LandingPage from './pages/LandingPage';
 import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
 
@@ -64,9 +65,26 @@ function App() {
       <Box className="main-content">
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/add-activity" element={<AddActivityPage />} />
-          <Route path="/activities/:id" element={<ActivityDetail />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-activity"
+            element={<AddActivityPage />}
+          />
+          <Route
+            path="/activities/:id"
+            element={
+              <ProtectedRoute>
+                <ActivityDetail />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Box>
       <Toaster />

@@ -12,7 +12,7 @@ import {
   Chip,
   IconButton,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from 'react-oauth2-code-pkce';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
@@ -36,6 +36,7 @@ import {
 
 function LandingPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { token } = useContext(AuthContext);
   const user = useSelector((state) => state.auth.user);
   const [localToken, setLocalToken] = useState(localStorage.getItem('token'));
@@ -51,6 +52,27 @@ function LandingPage() {
 
   // Consistent authentication check
   const isUserAuthenticated = !!(token || localToken || (user && user.sub));
+
+  // Auto-redirect authenticated users if they came from a protected route
+  useEffect(() => {
+    if (isUserAuthenticated && location.state?.from) {
+      const redirectTo = location.state.from.pathname || '/dashboard';
+      navigate(redirectTo, { replace: true });
+      toast.success('Welcome back! 🎉', {
+        duration: 2000,
+        position: 'top-center',
+        style: {
+          background: 'linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)',
+          color: 'white',
+          fontSize: '16px',
+          fontWeight: '600',
+          borderRadius: '12px',
+          padding: '12px 20px',
+          boxShadow: '0 4px 15px rgba(78, 205, 196, 0.3)',
+        }
+      });
+    }
+  }, [isUserAuthenticated, location.state, navigate]);
 
   const handleStartJourney = () => {
     if (isUserAuthenticated) {
